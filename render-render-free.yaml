@@ -1,0 +1,59 @@
+# Render Blueprint - 免费版本 (SQLite + HTTP APIs)
+# ================================================
+# 使用SQLite替代PostgreSQL，适合免费层
+# 使用HTTP API替代本地库，避免Rust编译问题
+
+services:
+  # Backend API Service (免费层)
+  - type: web
+    name: autocreator-free
+    env: python
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      # AI Provider - 选择一个免费服务
+      - key: AI_PROVIDER
+        value: "groq"  # 免费Llama 2
+      - key: GROQ_API_KEY
+        sync: false
+      # 可选: Hugging Face
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      # 可选: Google Gemini
+      - key: GEMINI_API_KEY
+        sync: false
+      # 可选: 语音合成
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      # YouTube (可选)
+      - key: YOUTUBE_CLIENT_ID
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRET
+        sync: false
+    healthCheckPath: /api/health
+    plan: free
+    diskRequired: true  # 需要磁盘存储SQLite数据库
+    diskSize: 1024  # 1GB磁盘空间
+
+  # Background Worker (可选，需要Standard计划)
+  - type: worker
+    name: autocreator-worker
+    env: python
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: celery -A app.workers.celery_app worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: AI_PROVIDER
+        value: "groq"
+      - key: GROQ_API_KEY
+        sync: false
+    plan: standard  # Worker需要Standard计划
+
+# 重要说明：
+# 1. 使用SQLite替代PostgreSQL (免费层不支持)
+# 2. 不要安装需要Rust编译的包
+# 3. 对于语音生成，建议设置ELEVENLABS_API_KEY或安装edge-tts本地
+# 4. 免费层磁盘空间有限，定期清理生成的文件
