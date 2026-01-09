@@ -1,0 +1,39 @@
+# AutoCreator AI - Ultra Minimal for Render (Python 3.11 + Pure Python Only)
+# ============================================================================
+# ⚠️ هذه الحزم لا تحتاج Rust compiler وتعمل مباشرة على Render
+
+# === Web Framework (Pure Python) ===
+fastapi==0.109.2
+uvicorn==0.27.1
+python-multipart==0.0.9
+
+# === HTTP Client (Pure Python) ===
+httpx==0.26.0
+aiofiles==23.2.1
+
+# === Configuration (Pure Python) ===
+python-dotenv==1.0.1
+
+# === Simple Validation (بدون pydantic-core) ===
+# نستخدم dict و simple types بدلاً من pydantic
+
+# === Async Database (Pure Python - SQLite) ===
+aiosqlite==0.19.0
+
+# === Redis (Pure Python) ===
+redis==5.0.1
+
+# === Background Tasks (Pure Python) ===
+celery==5.3.6
+
+# === AI HTTP Clients (Pure Python) ===
+# هذه الحزم تستخدم HTTP APIs فقط
+aiohttp==3.9.3
+
+# === Development Tools ===
+pytest==7.4.4
+pytest-asyncio==0.23.4
+
+# ⚠️ لا تضيف anything يتطلب Rust/Rust compiler!
+# ❌ لا: torch, transformers, diffusers, TTS, pydantic, asyncpg
+# ✅ نعم: aiohttp, httpx, aiosqlite, redis
