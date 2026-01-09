@@ -1,0 +1,83 @@
+# Render Blueprint - Infrastructure as Code
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Backend API Service
+  - type: web
+    name: autocreator-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: autocreator-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: autocreator-redis
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: YOUTUBE_CLIENT_ID
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRET
+        sync: false
+      - key: YOUTUBE_REFRESH_TOKEN
+        sync: false
+    healthCheckPath: /api/health
+    plan: free
+
+  # Background Worker for Video Processing
+  - type: worker
+    name: autocreator-worker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A backend.app.workers.celery_app worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: autocreator-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: autocreator-redis
+          property: connectionString
+    plan: standard
+
+databases:
+  - name: autocreator-db
+    databaseName: autocreator
+    user: autocreator
+    plan: free
+
+redis:
+  - name: autocreator-redis
+    plan: free
+    ipAllowList: []
+
+services:
+  # Frontend Service (Optional - if you want to deploy frontend separately)
+  - type: web
+    name: autocreator-frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: autocreator-backend
+          property: url
+    rootDirectory: /
+    plan: free
