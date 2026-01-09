@@ -5,13 +5,13 @@ from datetime import datetime
 from typing import Dict, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agents.script_writer import ScriptWriterAgent
-from app.agents.image_generator import ImageGeneratorAgent
-from app.agents.voice_generator import VoiceGeneratorAgent
-from app.agents.video_editor import VideoEditorAgent
-from app.services.youtube_service import YouTubeService
-from app.services.project_service import ProjectService
-from app.core.config import settings
+from .agents.script_writer import ScriptWriterAgent
+from .agents.image_generator import ImageGeneratorAgent
+from .agents.voice_generator import VoiceGeneratorAgent
+from .agents.video_editor import VideoEditorAgent
+from .services.youtube_service import YouTubeService
+from .services.project_service import ProjectService
+from .core.config import settings
 
 
 class OrchestratorAgent:

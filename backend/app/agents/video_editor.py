@@ -3,7 +3,7 @@ import os
 import subprocess
 from typing import List, Dict
 from pathlib import Path
-from app.core.config import settings
+from .core.config import settings
 
 
 class VideoEditorAgent:

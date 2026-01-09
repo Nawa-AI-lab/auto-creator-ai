@@ -3,7 +3,7 @@ import base64
 import os
 from typing import List, Optional
 from openai import AsyncOpenAI
-from app.core.config import settings
+from .core.config import settings
 
 
 class ImageGeneratorAgent:

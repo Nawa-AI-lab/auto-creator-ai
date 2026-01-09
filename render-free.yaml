@@ -1,0 +1,97 @@
+# Render Blueprint - 免费版本部署配置
+# ======================================
+
+services:
+  # Backend API Service
+  - type: web
+    name: autocreator-free-backend
+    env: python
+    buildCommand: pip install -r requirements-free.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: autocreator-free-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: autocreator-free-redis
+          property: connectionString
+      # 免费AI提供商配置
+      - key: AI_PROVIDER
+        value: "groq"  # 使用Groq免费Llama
+      - key: GROQ_API_KEY
+        sync: false
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: HF_TOKEN
+        sync: false
+      # 语音合成
+      - key: TTS_PROVIDER
+        value: "edge"
+      # YouTube (可选)
+      - key: YOUTUBE_CLIENT_ID
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRET
+        sync: false
+    healthCheckPath: /api/health
+    plan: free
+
+  # Background Worker
+  - type: worker
+    name: autocreator-free-worker
+    env: python
+    buildCommand: pip install -r requirements-free.txt
+    startCommand: celery -A app.workers.celery_app worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: autocreator-free-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: autocreator-free-redis
+          property: connectionString
+      - key: AI_PROVIDER
+        value: "groq"
+    plan: standard  # 需要Standard计划以获得更多资源
+
+databases:
+  - name: autocreator-free-db
+    databaseName: autocreator
+    user: autocreator
+    plan: free
+
+redis:
+  - name: autocreator-free-redis
+    plan: free
+    ipAllowList: []
+
+services:
+  # Frontend (可选)
+  - type: web
+    name: autocreator-free-frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: autocreator-free-backend
+          property: url
+    rootDirectory: /
+    plan: free
+
+# 注意事项：
+# 1. 免费计划不支持持久化存储，生成的图片和视频会在容器重启后丢失
+# 2. 如果需要持久化存储，需要升级到付费计划
+# 3. Groq API有速率限制，大规模使用可能需要升级

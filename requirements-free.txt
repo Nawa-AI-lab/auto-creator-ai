@@ -1,0 +1,62 @@
+# AutoCreator AI - 免费替代方案
+# 所有服务都可以使用免费额度！
+
+# === OpenAI (可选) ===
+# 如果没有OpenAI密钥，可以使用免费的Hugging Face替代
+# OpenAI GPT-4 (昂贵)
+# openai==1.12.0
+
+# === 免费替代方案 ===
+
+# 1. Ollama (完全免费，本地运行)
+# 安装: curl -fsSL https://ollama.ai/install.sh | sh
+# 使用: ollama run llama2
+ollama>=0.1.0
+
+# 2. Hugging Face Inference API (免费额度)
+# https://huggingface.co/inference-api
+huggingface_hub>=0.20.0
+
+# 3. Groq (免费额度，Llama模型，速度快)
+# https://console.groq.com/
+groq>=0.4.0
+
+# 4. Google's Gemini API (免费额度)
+google-generativeai>=0.3.0
+
+# === 图片生成 (免费) ===
+
+# 1. Hugging Face免费图片生成
+transformers>=4.35.0
+diffusers>=0.26.0
+torch>=2.0.0  # 较大，但完全免费
+
+# 2. Stability AI (免费额度)
+# stability-sdk>=0.8.0
+
+# === 语音合成 (免费) ===
+
+# 1. OpenAI TTS (便宜)
+# openai>=1.0.0  # 如果需要
+
+# 2. Edge TTS (完全免费，使用Microsoft Edge)
+edge-tts>=6.1.0
+
+# === 视频处理 ===
+ffmpeg-python>=0.2.0
+moviepy>=1.0.3
+
+# === 后端服务 ===
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+redis>=5.0.0
+celery>=5.3.0
+sqlalchemy>=2.0.0
+asyncpg>=0.29.0
+python-dotenv>=1.0.0
+httpx>=0.26.0
+
+# === 开发工具 ===
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+black>=24.1.0
